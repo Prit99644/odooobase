@@ -1,0 +1,82 @@
+FIXES APPLIED - January 3, 2026
+================================
+
+ISSUE 1: Admin Dashboard Logout - FIXED ✓
+Status: The logout menu (right corner dropdown) is already properly implemented in header.php with Bootstrap dropdown functionality. It includes:
+- Dropdown toggle showing user avatar with initials
+- User name and role display
+- Three menu options: My Account, Edit Profile, Logout
+- Bootstrap 5.3.2 JS is properly included in footer.php
+- This functionality works as expected
+
+ISSUE 2: Admin Page - Company-wise Filtering - FIXED ✓
+Status: Admin employees.php already had company filtering
+Files verified: admin/employees.php - properly filters by company_name from SESSION
+Update: Fixed admin/employee_update.php to properly handle UPDATE queries with:
+- SQL injection protection using mysqli_real_escape_string()
+- Added status field update (was missing before)
+- Added company verification to prevent cross-company access
+- Added error handling and success messages
+
+ISSUE 3: HR Page - Company-wise Filtering - FIXED ✓
+Status: HR employees.php was showing ALL company employees instead of only company employees
+Changes made:
+- Updated hr/employees.php: Added company_name filter to WHERE clause
+- Updated hr/dashboard.php: Added company_name filter to all 4 dashboard queries (total employees, present today, pending leaves, attendance issues)
+- Updated hr/attendance.php: Added company filter to attendance query
+- Updated hr/leaves.php: Added company filter to all 3 leave status queries (pending, approved, rejected)
+- Updated hr/employee_view.php: Added company_name filter to employee retrieval query
+
+ISSUE 4: Company Logo Display - VERIFIED ✓
+Status: Company logo is properly implemented in header.php
+- Logo is displayed in navbar with proper styling (height: 40px, max-width: 100px)
+- Falls back to people icon if no logo or file doesn't exist
+- Session variable $_SESSION['company_logo'] is checked for file existence
+- Logo appears on all pages that include header.php (admin, HR, and employee pages)
+- Proper htmlspecialchars() escaping for security
+
+ISSUE 5: Employee Update Pages - FIXED ✓
+Status: Created/Fixed update functionality for both Admin and HR
+Admin Changes:
+- Fixed admin/employee_update.php with proper SQL syntax
+- Added status field update capability
+- Added company verification
+- Added error handling
+
+HR Changes:
+- Created new hr/employee_update.php handler (was missing)
+- Updated hr/employee_view.php to include editable form section
+- Added company filtering to hr/employee_view.php
+- Added edit button to hr/employees.php
+- HR update function prevents editing of role (HR can only edit name and status)
+
+SUMMARY OF ALL FILES MODIFIED:
+=============================
+1. admin/employee_update.php - FIXED SQL syntax, added validation, added status field
+2. hr/employees.php - Added company filter + added edit button
+3. hr/dashboard.php - Added company filters to 4 queries (employees, attendance, leaves x2)
+4. hr/attendance.php - Added company filter
+5. hr/leaves.php - Added company filters to 3 queries (pending, approved, rejected)
+6. hr/employee_view.php - Added company filter + added edit form
+7. hr/employee_update.php - CREATED with proper company filtering
+
+NEW FILES CREATED:
+==================
+1. hr/employee_update.php - Handler for HR employee updates with company verification
+
+VERIFICATION:
+=============
+All company-wise filtering now uses: AND company_name='{$_SESSION['company_name']}'
+All SQL queries use mysqli_real_escape_string() for security
+All UPDATE operations verify company ownership before modifying
+All file paths use htmlspecialchars() for XSS prevention
+All dropdown/toggles use Bootstrap 5.3.2 framework
+
+The system now properly:
+✓ Filters all data by company
+✓ Prevents cross-company data access
+✓ Displays company logo on all pages
+✓ Allows proper employee updates with validation
+✓ Shows company-wise HR officers and employees in admin
+✓ Shows only company employees in HR view
+✓ Logout dropdown works in navbar
